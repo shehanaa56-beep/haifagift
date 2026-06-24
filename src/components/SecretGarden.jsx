@@ -464,6 +464,7 @@ function ScratchCard({ onBack }) {
   const canvasRef = useRef(null);
   const [isScratchedOff, setIsScratchedOff] = useState(false);
   const [isDrawing, setIsDrawing] = useState(false);
+  const isDrawingRef = useRef(false);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -555,20 +556,38 @@ function ScratchCard({ onBack }) {
 
   const handleMouseDown = (e) => {
     setIsDrawing(true);
+    isDrawingRef.current = true;
     const pos = getMousePos(e);
     scratch(pos.x, pos.y);
   };
 
   const handleMouseMove = (e) => {
     if (!isDrawing) return;
-    e.preventDefault();
     const pos = getMousePos(e);
     scratch(pos.x, pos.y);
   };
 
   const handleMouseUp = () => {
     setIsDrawing(false);
+    isDrawingRef.current = false;
   };
+
+  // Attach non-passive touchmove listener directly so we can preventDefault
+  // This stops the page from scrolling while scratching on mobile
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const onTouchMove = (e) => {
+      if (!isDrawingRef.current) return;
+      e.preventDefault();
+      const pos = getMousePos(e);
+      scratch(pos.x, pos.y);
+    };
+
+    canvas.addEventListener('touchmove', onTouchMove, { passive: false });
+    return () => canvas.removeEventListener('touchmove', onTouchMove);
+  }, []);
 
   return (
     <div className="gift-reveal-page">
