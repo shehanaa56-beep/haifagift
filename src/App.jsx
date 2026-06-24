@@ -9,6 +9,7 @@ import MemoryLaneBox from './components/MemoryLaneBox';
 import CelebrationBox from './components/CelebrationBox';
 import SecretGarden from './components/SecretGarden';
 import GiftRevealPage from './components/GiftRevealPage';
+import GardenThanksPage from './components/GardenThanksPage';
 
 export default function App() {
   const [view, setView] = useState('passcode'); // 'passcode' | 'dashboard' | 'box1' | 'box2' | 'box3' | 'gift-reveal' | 'garden'
@@ -101,7 +102,7 @@ export default function App() {
             <SurpriseDashboard
               completedBoxes={completedBoxes}
               onSelectBox={(boxId) => setView(boxId)}
-              onEnterGarden={() => setView('garden')}
+              onEnterGarden={() => setView('garden-thanks')}
             />
           </motion.div>
         );
@@ -165,6 +166,19 @@ export default function App() {
             className="page-container"
           >
             <GiftRevealPage onNext={() => setView('garden')} />
+          </motion.div>
+        );
+      case 'garden-thanks':
+        return (
+          <motion.div
+            key="garden-thanks"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8 }}
+            className="page-container"
+          >
+            <GardenThanksPage onBack={() => setView('dashboard')} />
           </motion.div>
         );
       case 'garden':
